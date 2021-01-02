@@ -43,7 +43,7 @@ load = B.readFile dataPath >>= maybe (error "couldn't load") (pure . A.listArray
 
 handleGet :: Linus ()
 handleGet = do
-    count <- param "count" `rescue` (pure . const 1) 
+    count <- min 175 <$> param "count" `rescue` (pure . const 1) 
     replicateM count getRant >>= S.json >> status status200
     
 runServer :: IO ()
