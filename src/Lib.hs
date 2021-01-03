@@ -15,7 +15,7 @@ import Control.Monad.Trans.Class ( MonadTrans(lift) )
 import Network.HTTP.Types ( status200, status400 )
 import System.Random ( getStdRandom, Random(randomR) )
 
-data Rant = Rant { text :: String
+data Rant = Rant { rant :: String
                  , hate :: Double
                  } deriving (Eq, Show)
                  
@@ -46,9 +46,3 @@ handleGet = do
     count <- min 175 <$> param "count" `rescue` (pure . const 1) 
     replicateM count getRant >>= S.json >> status status200
     
-runServer :: IO ()
-runServer = do
-    rants <- load
-    scottyT 3000 (`runReaderT` rants) $ do
-        get "/rants" handleGet
-        notFound $ S.text "make a GET request to /rants to hear from Linus!" >> status status400
